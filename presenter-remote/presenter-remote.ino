@@ -1,4 +1,5 @@
 #include <BleKeyboard.h>
+#include <esp_bt.h>
 
 BleKeyboard bleKeyboard("Presenter remote", "William Grover", 100);
 int lastSteadyState = LOW;
@@ -10,6 +11,7 @@ void setup() {
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
   bleKeyboard.begin();
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);  # testing setting max BLE transmit power
   pinMode(21, INPUT_PULLUP);
 }
 
