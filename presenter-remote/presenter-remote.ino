@@ -6,13 +6,15 @@ int lastSteadyState = LOW;
 int lastFlickerableState = LOW;
 int currentState;
 unsigned long lastDebounceTime = 0;
+unsigned long keepAliveTime = 0;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting BLE work!");
   bleKeyboard.begin();
-  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);  # testing setting max BLE transmit power
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9); 
   pinMode(21, INPUT_PULLUP);
+  keepAliveTime = millis() + 1000;
 }
 
 void loop() {
@@ -28,6 +30,11 @@ void loop() {
         bleKeyboard.write(KEY_RIGHT_ARROW);
       }
       lastSteadyState = currentState;
+    }
+    if (millis() > keepAliveTime) {
+      Serial.println("keep alive");
+      bleKeyboard.write(KEY_LEFT_SHIFT);
+      keepAliveTime = millis()+1000;
     }
   }
 }
